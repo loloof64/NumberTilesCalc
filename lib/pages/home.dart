@@ -1,5 +1,6 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:number_tiles_calc/core/complete_user_solution.dart';
 import 'package:number_tiles_calc/core/operation.dart';
 import 'package:number_tiles_calc/core/optimal_solver.dart';
 import 'package:number_tiles_calc/widgets/combine_tiles_dialog_panel.dart';
@@ -20,10 +21,10 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   bool _isSolved = false;
   bool _targetReached = false;
-  int _target = 887;
+  int _target = 997;
   List<int> _startTilesValues = <int>[25, 25, 10, 25, 3, 8];
   List<int> _tilesValues = [];
-  List<Operation> _operations = <Operation>[];
+  List<Operation>? _operations = <Operation>[];
   List<Operation>? _solution = <Operation>[];
   double _numberTilesExtension = 0.0;
 
@@ -58,8 +59,14 @@ class _MyHomePageState extends State<MyHomePage>
       tiles: _startTilesValues,
     );
     final solution = solver.solve();
+    final newOperationsState = completeSolution(
+      targetValue: _target,
+      setOperations: _operations ?? [],
+      remainingTiles: _tilesValues,
+    );
     setState(() {
       _solution = solution;
+      _operations = newOperationsState;
       _isSolved = true;
     });
   }
@@ -67,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage>
   void _clearContent() {
     setState(() {
       _tilesValues = _startTilesValues.where((c) => true).toList();
-      _operations.clear();
+      _operations?.clear();
       _numberTilesExtension = 0;
     });
   }
@@ -92,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage>
 
     if (result != null) {
       setState(() {
-        _operations.add(result.$1);
+        _operations?.add(result.$1);
         _tilesValues[index] = result.$1.apply();
         _tilesValues.removeAt(result.$2);
         _numberTilesExtension += numberTilesExtensionPerStep;
@@ -156,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage>
             ),
             !_isSolved
                 ? OperationsWidget(
-                    operations: _operations,
+                    operations: _operations ?? [],
                     hasNoSolution: false,
                   )
                 : Flexible(

@@ -2,11 +2,13 @@ import 'package:number_tiles_calc/core/operation.dart';
 
 class OptimalSolver {
   final int target;
+  final List<int> tiles;
+
   List<Operation>? bestSolution;
   int bestDepth = 999999;
-  List<int> tiles;
 
-  final Set<String> memo = {};
+  // Memo now stores the minimum depth seen for a state
+  final Map<String, int> memo = {};
 
   OptimalSolver({required this.target, required this.tiles});
 
@@ -16,7 +18,7 @@ class OptimalSolver {
   }
 
   void _dfs(List<int> nums, List<Operation> path) {
-    // Early pruning by depth
+    // Prune by depth
     if (path.length >= bestDepth) return;
 
     // Check if target reached
@@ -28,39 +30,49 @@ class OptimalSolver {
       }
     }
 
-    // Memoization key
+    // Canonical state
     final sorted = List<int>.from(nums)..sort();
     final key = sorted.join(',');
 
-    if (memo.contains(key)) return;
-    memo.add(key);
+    // Memo with depth check
+    if (memo.containsKey(key) && memo[key]! <= path.length) {
+      return;
+    }
+    memo[key] = path.length;
 
-    // Try all pairs
+    // Explore pairs
     for (int i = 0; i < nums.length; i++) {
       for (int j = i + 1; j < nums.length; j++) {
         final a = nums[i];
         final b = nums[j];
 
+        // Remaining tiles
         final rest = <int>[];
         for (int k = 0; k < nums.length; k++) {
           if (k != i && k != j) rest.add(nums[k]);
         }
 
+        // Generate results
         for (final entry in _compute(a, b)) {
           final result = entry.$1;
-          final op = entry.$2;
+          final opType = entry.$2;
+
+          // Build correct operation (order matters for sub/div)
+          late Operation op;
+
+          if (opType == Operator.add || opType == Operator.mult) {
+            op = Operation(operand1: a, operand2: b, operator: opType);
+          } else {
+            if (a > b) {
+              op = Operation(operand1: a, operand2: b, operator: opType);
+            } else {
+              op = Operation(operand1: b, operand2: a, operator: opType);
+            }
+          }
 
           final newNums = [...rest, result];
 
-          if (op == Operator.add || op == Operator.mult) {
-            path.add(Operation(operand1: a, operand2: b, operator: op));
-          } else {
-            if (a > b) {
-              path.add(Operation(operand1: a, operand2: b, operator: op));
-            } else {
-              path.add(Operation(operand1: b, operand2: a, operator: op));
-            }
-          }
+          path.add(op);
           _dfs(newNums, path);
           path.removeLast();
         }
@@ -71,10 +83,12 @@ class OptimalSolver {
   List<(int, Operator)> _compute(int a, int b) {
     final results = <(int, Operator)>[];
 
-    // Addition
-    results.add((a + b, Operator.add));
+    // Addition (skip useless 0)
+    if (a != 0 && b != 0) {
+      results.add((a + b, Operator.add));
+    }
 
-    // Multiplication (skip useless)
+    // Multiplication (skip useless 1)
     if (a != 1 && b != 1) {
       results.add((a * b, Operator.mult));
     }
