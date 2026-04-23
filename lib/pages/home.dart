@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 const fontSize = 22.0;
+const solutionHeight = 200.0;
+const solutionTextWidth = 150.0;
 
 enum Operator {
   add,
@@ -62,13 +64,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<int> _tilesValues = <int>[0, 120, 3, 1, 25, 75];
+  List<int> _tilesValues = <int>[];
   List<Operation> _operations = <Operation>[
     Operation(operand1: 10, operand2: 2, operator: Operator.sub),
     Operation(operand1: 2, operand2: 8, operator: Operator.mult),
-    Operation(operand1: 120, operand2: 30, operator: Operator.div),
-    Operation(operand1: 10, operand2: 2, operator: Operator.sub),
-    Operation(operand1: 10, operand2: 2, operator: Operator.sub),
+    Operation(operand1: 30, operand2: 40, operator: Operator.mult),
   ];
 
   @override
@@ -138,11 +138,14 @@ class OperationsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final lines = operations
         .map(
-          (op) => Text(
-            op.toString(),
-            style: TextStyle(
-              color: Colors.white.withAlpha(220),
-              fontSize: fontSize,
+          (op) => SizedBox(
+            width: solutionTextWidth,
+            child: Text(
+              op.toString(),
+              style: TextStyle(
+                color: Colors.white.withAlpha(220),
+                fontSize: fontSize,
+              ),
             ),
           ),
         )
@@ -153,14 +156,13 @@ class OperationsWidget extends StatelessWidget {
       child: Container(
         color: Theme.of(context).colorScheme.tertiary,
         width: double.infinity,
-        child: Center(
-          child: Column(
-            spacing: 8.0,
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: lines,
-          ),
+        height: solutionHeight,
+        child: Column(
+          spacing: 8.0,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: lines,
         ),
       ),
     );
