@@ -14,12 +14,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _targetReached = false;
   int _target = 120;
   List<int> _tilesValues = <int>[75, 25, 10, 25, 3, 8];
   List<Operation> _operations = <Operation>[];
   double _numberTilesExtension = 0.0;
 
   Future<void> _startTilesCombination(int index) async {
+    if (_targetReached) return;
     if (_tilesValues.length < 2) return;
     final result = await Navigator.of(context).push<(Operation, int)>(
       MaterialPageRoute(
@@ -43,8 +45,19 @@ class _MyHomePageState extends State<MyHomePage> {
         _tilesValues.remove(result.$2);
         _numberTilesExtension += numberTilesExtensionPerStep;
       });
+      if (_isWon()) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("You won !")));
+        setState(() {
+          _targetReached = true;
+        });
+      }
     }
   }
+
+  bool _isWon() => _tilesValues.contains(_target);
 
   @override
   Widget build(BuildContext context) {
