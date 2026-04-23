@@ -1,6 +1,7 @@
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:number_tiles_calc/core/complete_user_solution.dart';
+import 'package:number_tiles_calc/core/game_generator.dart';
 import 'package:number_tiles_calc/core/operation.dart';
 import 'package:number_tiles_calc/core/optimal_solver.dart';
 import 'package:number_tiles_calc/widgets/combine_tiles_dialog_panel.dart';
@@ -21,8 +22,9 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   bool _isSolved = false;
   bool _targetReached = false;
-  int _target = 540;
-  List<int> _startTilesValues = <int>[25, 25, 10, 25, 3, 8];
+  final GameGenerator _gameGenerator = GameGenerator();
+  int _target = 0;
+  List<int> _startTilesValues = <int>[];
   List<int> _tilesValues = [];
   List<Operation> _operations = <Operation>[];
   List<Operation>? _solution = <Operation>[];
@@ -45,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
     _tilesValues = _startTilesValues.where((c) => true).toList();
+    _startNewGame();
     super.initState();
   }
 
@@ -52,6 +55,20 @@ class _MyHomePageState extends State<MyHomePage>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void _startNewGame() {
+    final (target, tiles) = _gameGenerator.generate();
+    setState(() {
+      _operations = [];
+      _solution = [];
+      _completedSolution = [];
+      _numberTilesExtension = 0;
+      _startTilesValues = tiles.map((c) => c).toList();
+      _tilesValues = tiles.map((c) => c).toList();
+      _target = target;
+      _isSolved = false;
+    });
   }
 
   void _solve() {
@@ -196,6 +213,15 @@ class _MyHomePageState extends State<MyHomePage>
               titleStyle: TextStyle(color: Colors.white),
               bubbleColor: Colors.green,
               onPress: _solve,
+            ),
+          if (_isSolved)
+            Bubble(
+              icon: Icons.games_outlined,
+              iconColor: Colors.white,
+              title: "New game",
+              titleStyle: TextStyle(color: Colors.white),
+              bubbleColor: Colors.blueAccent,
+              onPress: _startNewGame,
             ),
         ],
         iconData: Icons.ac_unit,
