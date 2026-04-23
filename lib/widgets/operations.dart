@@ -6,8 +6,13 @@ const solutionHeight = 200.0;
 final solutionTextWidth = 250.0;
 
 class OperationsWidget extends StatelessWidget {
+  final bool hasNoSolution;
   final List<Operation> operations;
-  const OperationsWidget({super.key, required this.operations});
+  const OperationsWidget({
+    super.key,
+    required this.hasNoSolution,
+    required this.operations,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,6 @@ class OperationsWidget extends StatelessWidget {
         width: double.infinity,
         height: solutionHeight,
         child: Column(
-          spacing: 8.0,
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
