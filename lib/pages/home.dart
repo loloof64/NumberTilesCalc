@@ -37,10 +37,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     if (result != null) {
-      _operations.add(result.$1);
-      _tilesValues.remove(result.$2);
       setState(() {
+        _operations.add(result.$1);
         _tilesValues[index] = result.$1.apply();
+        _tilesValues.remove(result.$2);
         _numberTilesExtension += numberTilesExtensionPerStep;
       });
     }
