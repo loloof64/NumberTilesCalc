@@ -1,5 +1,59 @@
 import 'package:flutter/material.dart';
 
+const fontSize = 22.0;
+
+enum Operator {
+  add,
+  sub,
+  mult,
+  div;
+
+  @override
+  String toString() {
+    return switch (this) {
+      add => "+",
+      sub => "-",
+      mult => "*",
+      div => "/",
+    };
+  }
+
+  int applyTo(int operand1, int operand2) {
+    return switch (this) {
+      add => operand1 + operand2,
+      sub => operand1 - operand2,
+      mult => operand1 * operand2,
+      div => operand1 / operand2,
+    }.toInt();
+  }
+
+  bool isValidFor(int operand1, int operand2) {
+    return switch (this) {
+      add => true,
+      mult => true,
+      sub => operand2 >= operand1,
+      div => (operand1 % operand2) == 0,
+    };
+  }
+}
+
+class Operation {
+  final int operand1;
+  final int operand2;
+  final Operator operator;
+
+  Operation({
+    required this.operand1,
+    required this.operand2,
+    required this.operator,
+  });
+
+  @override
+  String toString() {
+    return "$operand1 $operator $operand2 = ${operator.applyTo(operand1, operand2)}";
+  }
+}
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -9,6 +63,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<int> _tilesValues = <int>[0, 120, 3, 1, 25, 75];
+  List<Operation> _operations = <Operation>[
+    Operation(operand1: 10, operand2: 2, operator: Operator.sub),
+    Operation(operand1: 2, operand2: 8, operator: Operator.mult),
+    Operation(operand1: 120, operand2: 30, operator: Operator.div),
+    Operation(operand1: 10, operand2: 2, operator: Operator.sub),
+    Operation(operand1: 10, operand2: 2, operator: Operator.sub),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: numberTiles,
               ),
             ),
+            OperationsWidget(operations: _operations),
           ],
         ),
       ),
@@ -58,9 +120,46 @@ class NumberTile extends StatelessWidget {
         child: Text(
           value.toString(),
           style: TextStyle(
-            fontSize: 22.0,
+            fontSize: fontSize,
             fontWeight: FontWeight.w900,
             color: Colors.white.withAlpha(220),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OperationsWidget extends StatelessWidget {
+  final List<Operation> operations;
+  const OperationsWidget({super.key, required this.operations});
+
+  @override
+  Widget build(BuildContext context) {
+    final lines = operations
+        .map(
+          (op) => Text(
+            op.toString(),
+            style: TextStyle(
+              color: Colors.white.withAlpha(220),
+              fontSize: fontSize,
+            ),
+          ),
+        )
+        .toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        color: Theme.of(context).colorScheme.tertiary,
+        width: double.infinity,
+        child: Center(
+          child: Column(
+            spacing: 8.0,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: lines,
           ),
         ),
       ),
