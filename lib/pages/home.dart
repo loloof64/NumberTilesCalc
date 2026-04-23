@@ -64,18 +64,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<int> _tilesValues = <int>[];
-  List<Operation> _operations = <Operation>[
-    Operation(operand1: 10, operand2: 2, operator: Operator.sub),
-    Operation(operand1: 2, operand2: 8, operator: Operator.mult),
-    Operation(operand1: 30, operand2: 40, operator: Operator.mult),
-  ];
+  int _target = 120;
+  List<int> _tilesValues = <int>[75, 25, 10, 25, 3, 8];
+  List<Operation> _operations = <Operation>[];
 
   @override
   Widget build(BuildContext context) {
     final numberTiles = _tilesValues
         .where((tile) => tile > 0)
-        .map((tile) => NumberTile(value: tile))
+        .map((tile) => NumberTile(value: tile, isTarget: false))
         .toList();
     return Scaffold(
       appBar: AppBar(
@@ -89,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            NumberTile(value: _target, isTarget: true),
             Flexible(
               child: Row(
                 spacing: 8.0,
@@ -107,13 +105,16 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class NumberTile extends StatelessWidget {
+  final bool isTarget;
   final int value;
-  const NumberTile({super.key, required this.value});
+  const NumberTile({super.key, required this.value, required this.isTarget});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.secondary,
+      color: isTarget
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.secondary,
       width: 55,
       height: 40,
       child: Center(
