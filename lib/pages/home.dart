@@ -20,8 +20,8 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   bool _isSolved = false;
   bool _targetReached = false;
-  int _target = 997;
-  List<int> _startTilesValues = <int>[75, 25, 10, 25, 3, 8];
+  int _target = 887;
+  List<int> _startTilesValues = <int>[25, 25, 10, 25, 3, 8];
   List<int> _tilesValues = [];
   List<Operation> _operations = <Operation>[];
   List<Operation>? _solution = <Operation>[];

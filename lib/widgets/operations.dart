@@ -34,15 +34,24 @@ class OperationsWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
-        color: Theme.of(context).colorScheme.tertiary,
+        color: hasNoSolution
+            ? Colors.red
+            : Theme.of(context).colorScheme.tertiary,
         width: double.infinity,
         height: solutionHeight,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: lines,
-        ),
+        child: hasNoSolution
+            ? Center(
+                child: Text(
+                  "No solution !",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight(900)),
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: lines,
+              ),
       ),
     );
   }
