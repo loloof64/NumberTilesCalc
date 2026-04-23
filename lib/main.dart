@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flex_seed_scheme/flex_seed_scheme.dart';
+import 'package:number_tiles_calc/pages/home.dart';
 
 const Color primarySeedColor = Color.fromARGB(255, 236, 10, 104);
 const Color secondarySeedColor = Color(0xFF3871BB);
@@ -39,26 +40,6 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(colorScheme: schemeDark),
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Home"),
-      ),
-      body: Center(child: Text("Hello, World !")),
     );
   }
 }
