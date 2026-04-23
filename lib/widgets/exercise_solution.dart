@@ -4,11 +4,13 @@ import 'package:number_tiles_calc/widgets/operations.dart';
 
 class ExerciseSolutionTabs extends StatelessWidget {
   final List<Operation>? optimalSolution;
+  final List<Operation> userStartSolution;
   final List<Operation>? completedSolution;
 
   const ExerciseSolutionTabs({
     super.key,
     required this.optimalSolution,
+    required this.userStartSolution,
     required this.completedSolution,
   });
 
@@ -34,7 +36,7 @@ class ExerciseSolutionTabs extends StatelessWidget {
                         hasNoSolution: false,
                       ),
                 OperationsWidget(
-                  operations: completedSolution ?? [],
+                  operations: completedSolution ?? userStartSolution,
                   hasNoSolution: completedSolution == null,
                 ),
               ],

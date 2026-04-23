@@ -21,11 +21,12 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   bool _isSolved = false;
   bool _targetReached = false;
-  int _target = 997;
+  int _target = 540;
   List<int> _startTilesValues = <int>[25, 25, 10, 25, 3, 8];
   List<int> _tilesValues = [];
-  List<Operation>? _operations = <Operation>[];
+  List<Operation> _operations = <Operation>[];
   List<Operation>? _solution = <Operation>[];
+  List<Operation>? _completedSolution = <Operation>[];
   double _numberTilesExtension = 0.0;
 
   late Animation<double> _animation;
@@ -59,14 +60,14 @@ class _MyHomePageState extends State<MyHomePage>
       tiles: _startTilesValues,
     );
     final solution = solver.solve();
-    final newOperationsState = completeSolution(
+    final completedSolution = completeSolution(
       targetValue: _target,
-      setOperations: _operations ?? [],
+      setOperations: _operations,
       remainingTiles: _tilesValues,
     );
     setState(() {
       _solution = solution;
-      _operations = newOperationsState;
+      _completedSolution = completedSolution;
       _isSolved = true;
     });
   }
@@ -74,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage>
   void _clearContent() {
     setState(() {
       _tilesValues = _startTilesValues.where((c) => true).toList();
-      _operations?.clear();
+      _operations.clear();
       _numberTilesExtension = 0;
     });
   }
@@ -99,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage>
 
     if (result != null) {
       setState(() {
-        _operations?.add(result.$1);
+        _operations.add(result.$1);
         _tilesValues[index] = result.$1.apply();
         _tilesValues.removeAt(result.$2);
         _numberTilesExtension += numberTilesExtensionPerStep;
@@ -163,13 +164,14 @@ class _MyHomePageState extends State<MyHomePage>
             ),
             !_isSolved
                 ? OperationsWidget(
-                    operations: _operations ?? [],
+                    operations: _operations,
                     hasNoSolution: false,
                   )
                 : Flexible(
                     child: ExerciseSolutionTabs(
                       optimalSolution: _solution,
-                      completedSolution: _operations,
+                      userStartSolution: _operations,
+                      completedSolution: _completedSolution,
                     ),
                   ),
           ],

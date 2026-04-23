@@ -39,19 +39,22 @@ class OperationsWidget extends StatelessWidget {
             : Theme.of(context).colorScheme.tertiary,
         width: double.infinity,
         height: solutionHeight,
-        child: hasNoSolution
-            ? Center(
-                child: Text(
-                  "No solution !",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight(900)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ...lines,
+            if (hasNoSolution)
+              Text(
+                "No solution !",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: lines,
               ),
+          ],
+        ),
       ),
     );
   }
