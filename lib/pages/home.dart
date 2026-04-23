@@ -16,9 +16,24 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _targetReached = false;
   int _target = 120;
-  List<int> _tilesValues = <int>[75, 25, 10, 25, 3, 8];
+  List<int> _startTilesValues = <int>[75, 25, 10, 25, 3, 8];
+  List<int> _tilesValues = [];
   List<Operation> _operations = <Operation>[];
   double _numberTilesExtension = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tilesValues = _startTilesValues.where((c) => true).toList();
+  }
+
+  void _clearContent() {
+    setState(() {
+      _tilesValues = _startTilesValues.where((c) => true).toList();
+      _operations.clear();
+      _numberTilesExtension = 0;
+    });
+  }
 
   Future<void> _startTilesCombination(int index) async {
     if (_targetReached) return;
@@ -105,6 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
             OperationsWidget(operations: _operations),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _clearContent,
+        child: Icon(Icons.delete),
       ),
     );
   }
