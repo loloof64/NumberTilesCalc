@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _operations.add(result.$1);
         _tilesValues[index] = result.$1.apply();
-        _tilesValues.remove(result.$2);
+        _tilesValues.removeAt(result.$2);
         _numberTilesExtension += numberTilesExtensionPerStep;
       });
       if (_isWon()) {

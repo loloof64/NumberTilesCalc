@@ -33,17 +33,19 @@ class _CombineTilesDialogPanelState extends State<CombineTilesDialogPanel> {
     final firstTileValue = widget.tilesValues[widget.firstTileIndex];
 
     final remainingTiles = widget.tilesValues
-        .where((tile) => tile != firstTileValue)
+        .asMap()
+        .entries
+        .where((entry) => entry.key != widget.firstTileIndex)
         .map(
-          (tile) => NumberTileWidget(
-            value: tile,
+          (entry) => NumberTileWidget(
+            value: entry.value,
             isTarget: false,
             sizeExtension: widget.numberTilesSizeExtension,
             onClick: () {
               if (_selectedOperator == null) return;
               final operation = Operation(
                 operand1: widget.tilesValues[widget.firstTileIndex],
-                operand2: tile,
+                operand2: entry.value,
                 operator: _selectedOperator!,
               );
               if (!operation.isValid()) {
@@ -55,7 +57,7 @@ class _CombineTilesDialogPanelState extends State<CombineTilesDialogPanel> {
                 Navigator.of(context).pop(null);
                 return;
               }
-              Navigator.of(context).pop((operation, tile));
+              Navigator.of(context).pop((operation, entry.key));
             },
           ),
         )
