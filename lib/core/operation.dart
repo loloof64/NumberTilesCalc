@@ -19,14 +19,14 @@ enum Operator {
       add => operand1 + operand2,
       sub => operand1 - operand2,
       mult => operand1 * operand2,
-      div => operand1 / operand2,
-    }.toInt();
+      div => operand1 ~/ operand2,
+    };
   }
 
   bool isValidFor(int operand1, int operand2) {
     return switch (this) {
-      add => true,
-      mult => true,
+      add => operand2 != 0,
+      mult => operand1 != 1 && operand2 != 1,
       sub => operand1 >= operand2,
       div => (operand1 % operand2) == 0,
     };
