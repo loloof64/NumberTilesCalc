@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:number_tiles_calc/core/operation.dart';
 import 'package:number_tiles_calc/widgets/operations.dart';
+import 'package:number_tiles_calc/i18n/strings.g.dart';
 
 class ExerciseSolutionTabs extends StatelessWidget {
   final List<Operation>? optimalSolution;
@@ -20,10 +21,10 @@ class ExerciseSolutionTabs extends StatelessWidget {
       length: 2,
       child: Column(
         children: [
-          const TabBar(
+          TabBar(
             tabs: [
-              Tab(text: 'Optimal solution'),
-              Tab(text: 'Completed solution'),
+              Tab(text: t.widgets.exercise_solution.optimal),
+              Tab(text: t.widgets.exercise_solution.completed),
             ],
           ),
           Expanded(

@@ -8,6 +8,7 @@ import 'package:number_tiles_calc/widgets/combine_tiles_dialog_panel.dart';
 import 'package:number_tiles_calc/widgets/exercise_solution.dart';
 import 'package:number_tiles_calc/widgets/number_tile.dart';
 import 'package:number_tiles_calc/widgets/operations.dart';
+import 'package:number_tiles_calc/i18n/strings.g.dart';
 
 const numberTilesExtensionPerStep = 15.3;
 
@@ -104,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage>
       MaterialPageRoute(
         builder: (context2) {
           return AlertDialog(
-            title: Text("Make your operation"),
+            title: Text(t.pages.home.title),
             content: CombineTilesDialogPanel(
               tilesValues: _tilesValues,
               firstTileIndex: index,
@@ -126,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage>
         if (!mounted) return;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text("You won !")));
+        ).showSnackBar(SnackBar(content: Text(t.pages.home.misc.you_won)));
         setState(() {
           _targetReached = true;
         });
@@ -155,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Home"),
+        title: Text(t.pages.home.title),
       ),
       body: Center(
         child: Column(
@@ -200,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage>
             Bubble(
               icon: Icons.delete,
               iconColor: Colors.white,
-              title: "Clear",
+              title: t.pages.home.fab.clear,
               titleStyle: TextStyle(color: Colors.white),
               bubbleColor: Colors.red,
               onPress: _clearContent,
@@ -209,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage>
             Bubble(
               icon: Icons.calculate,
               iconColor: Colors.white,
-              title: "Solve",
+              title: t.pages.home.fab.solve,
               titleStyle: TextStyle(color: Colors.white),
               bubbleColor: Colors.green,
               onPress: _solve,
@@ -218,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage>
             Bubble(
               icon: Icons.games_outlined,
               iconColor: Colors.white,
-              title: "New game",
+              title: t.pages.home.fab.new_game,
               titleStyle: TextStyle(color: Colors.white),
               bubbleColor: Colors.blueAccent,
               onPress: _startNewGame,

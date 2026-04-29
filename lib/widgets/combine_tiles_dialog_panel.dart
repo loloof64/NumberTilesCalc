@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:number_tiles_calc/core/operation.dart';
+import 'package:number_tiles_calc/i18n/strings.g.dart';
 import 'package:number_tiles_calc/widgets/number_tile.dart';
 import 'package:number_tiles_calc/widgets/operator_tile.dart';
 
@@ -51,7 +52,9 @@ class _CombineTilesDialogPanelState extends State<CombineTilesDialogPanel> {
               if (!operation.isValid()) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text("Result must be a positive integer !"),
+                    content: Text(
+                      t.widgets.combine_tiles_panel.expected_positive_integer,
+                    ),
                   ),
                 );
                 Navigator.of(context).pop(null);

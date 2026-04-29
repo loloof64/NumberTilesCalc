@@ -1,0 +1,25 @@
+{
+  "pages": {
+    "home": {
+      "title": "Accueil",
+      "fab": {
+        "clear": "Effacer",
+        "new_game": "Nouvelle partie",
+        "solve": "Résoudre"
+      },
+      "misc": {
+        "make_operation": "Façonnez votre opération",
+        "you_won": "Vous avez gagné"
+      }
+    }
+  },
+  "widgets": {
+    "combine_tiles_panel": {
+      "expected_positive_integer": "Le résultat doit être un entier positif !"
+    },
+    "exercise_solution": {
+      "optimal": "Solution optimale",
+      "completed": "Solution complétée"
+    }
+  }
+}

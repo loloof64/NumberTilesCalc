@@ -1,0 +1,25 @@
+{
+  "pages": {
+    "home": {
+      "title": "Home",
+      "fab": {
+        "clear": "Clear",
+        "new_game": "New game",
+        "solve": "Solve"
+      },
+      "misc": {
+        "make_operation": "Make your operation",
+        "you_won": "You won"
+      }
+    }
+  },
+  "widgets": {
+    "combine_tiles_panel": {
+      "expected_positive_integer": "Result must be a positive integer !"
+    },
+    "exercise_solution": {
+      "optimal": "Optimal solution",
+      "completed": "Completed solution"
+    }
+  }
+}
