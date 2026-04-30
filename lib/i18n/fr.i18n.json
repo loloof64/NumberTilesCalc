@@ -19,7 +19,8 @@
     },
     "exercise_solution": {
       "optimal": "Solution optimale",
-      "completed": "Solution complétée"
+      "completed": "Solution complétée",
+      "your_solution": "Votre solution"
     }
   }
 }

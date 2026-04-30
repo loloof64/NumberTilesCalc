@@ -4,12 +4,14 @@ import 'package:number_tiles_calc/widgets/operations.dart';
 import 'package:number_tiles_calc/i18n/strings.g.dart';
 
 class ExerciseSolutionTabs extends StatelessWidget {
+  final bool hasWon;
   final List<Operation>? optimalSolution;
   final List<Operation> userStartSolution;
   final List<Operation>? completedSolution;
 
   const ExerciseSolutionTabs({
     super.key,
+    required this.hasWon,
     required this.optimalSolution,
     required this.userStartSolution,
     required this.completedSolution,
@@ -24,7 +26,11 @@ class ExerciseSolutionTabs extends StatelessWidget {
           TabBar(
             tabs: [
               Tab(text: t.widgets.exercise_solution.optimal),
-              Tab(text: t.widgets.exercise_solution.completed),
+              Tab(
+                text: hasWon
+                    ? t.widgets.exercise_solution.your_solution
+                    : t.widgets.exercise_solution.completed,
+              ),
             ],
           ),
           Expanded(

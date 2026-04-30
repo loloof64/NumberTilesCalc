@@ -21,6 +21,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
+  bool _hasWon = false;
   bool _isSolved = false;
   bool _targetReached = false;
   final GameGenerator _gameGenerator = GameGenerator();
@@ -61,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage>
   void _startNewGame() {
     final (target, tiles) = _gameGenerator.generate();
     setState(() {
+      _hasWon = false;
       _operations = [];
       _solution = [];
       _completedSolution = [];
@@ -125,6 +127,10 @@ class _MyHomePageState extends State<MyHomePage>
       });
       if (_isWon()) {
         if (!mounted) return;
+        setState(() {
+          _hasWon = true;
+        });
+        _solve();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(t.pages.home.misc.you_won)));
@@ -187,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage>
                   )
                 : Flexible(
                     child: ExerciseSolutionTabs(
+                      hasWon: _hasWon,
                       optimalSolution: _solution,
                       userStartSolution: _operations,
                       completedSolution: _completedSolution,
