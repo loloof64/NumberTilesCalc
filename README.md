@@ -2,6 +2,8 @@
 
 Reach the result with the given number tiles.
 
+Maybe, if your solution starts well, it will also be able to give a solution based on your attempt.
+
 ## Developpers
 
 ### Translations
