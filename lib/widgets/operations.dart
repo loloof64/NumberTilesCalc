@@ -31,29 +31,31 @@ class OperationsWidget extends StatelessWidget {
         )
         .toList();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Container(
-        color: hasNoSolution
-            ? Colors.red
-            : Theme.of(context).colorScheme.tertiary,
-        width: double.infinity,
-        height: solutionHeight,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ...lines,
-            if (hasNoSolution)
-              Text(
-                "No solution !",
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Container(
+          color: hasNoSolution
+              ? Colors.red
+              : Theme.of(context).colorScheme.tertiary,
+          width: double.infinity,
+          height: solutionHeight,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ...lines,
+              if (hasNoSolution)
+                Text(
+                  "No solution !",
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
