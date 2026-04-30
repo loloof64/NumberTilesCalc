@@ -10,6 +10,11 @@
       "misc": {
         "make_operation": "Make your operation",
         "you_won": "You won"
+      },
+      "timer": {
+        "set_timer": "Set timer",
+        "enable": "Enable timer",
+        "time_up": "Time's up!"
       }
     }
   },

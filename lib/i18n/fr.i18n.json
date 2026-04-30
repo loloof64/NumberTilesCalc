@@ -10,6 +10,11 @@
       "misc": {
         "make_operation": "Façonnez votre opération",
         "you_won": "Vous avez gagné"
+      },
+      "timer": {
+        "set_timer": "Régler le minuteur",
+        "enable": "Activer le minuteur",
+        "time_up": "Temps écoulé !"
       }
     }
   },

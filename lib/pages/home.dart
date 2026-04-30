@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:number_tiles_calc/core/complete_user_solution.dart';
@@ -33,6 +35,11 @@ class _MyHomePageState extends State<MyHomePage>
   List<Operation>? _completedSolution = <Operation>[];
   double _numberTilesExtension = 0.0;
 
+  // Timer: null = disabled, otherwise duration in seconds (1–120)
+  int? _timerSeconds;
+  int _remainingSeconds = 0;
+  Timer? _countdownTimer;
+
   late Animation<double> _animation;
   late AnimationController _animationController;
 
@@ -55,11 +62,49 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void dispose() {
+    _countdownTimer?.cancel();
     _animationController.dispose();
     super.dispose();
   }
 
+  String _formatTime(int seconds) {
+    final m = seconds ~/ 60;
+    final s = seconds % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  void _startTimer() {
+    _countdownTimer?.cancel();
+    if (_timerSeconds == null) return;
+    setState(() {
+      _remainingSeconds = _timerSeconds!;
+    });
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds <= 1) {
+        timer.cancel();
+        setState(() => _remainingSeconds = 0);
+        _onTimerExpired();
+      } else {
+        setState(() => _remainingSeconds--);
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
+  }
+
+  void _onTimerExpired() {
+    _solve();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(t.pages.home.timer.time_up)),
+    );
+  }
+
   void _startNewGame() {
+    _stopTimer();
     final (target, tiles) = _gameGenerator.generate();
     setState(() {
       _hasWon = false;
@@ -71,10 +116,13 @@ class _MyHomePageState extends State<MyHomePage>
       _tilesValues = tiles.map((c) => c).toList();
       _target = target;
       _isSolved = false;
+      _targetReached = false;
     });
+    _startTimer();
   }
 
   void _solve() {
+    _stopTimer();
     OptimalSolver solver = OptimalSolver(
       target: _target,
       tiles: _startTilesValues,
@@ -98,6 +146,87 @@ class _MyHomePageState extends State<MyHomePage>
       _operations.clear();
       _numberTilesExtension = 0;
     });
+  }
+
+  Future<void> _showTimerSettings() async {
+    bool enabled = _timerSeconds != null;
+    int sliderValue = _timerSeconds ?? 60;
+
+    final result = await showDialog<(bool, int)>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: Text(t.pages.home.timer.set_timer),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(t.pages.home.timer.enable),
+                    Switch(
+                      value: enabled,
+                      onChanged: (value) {
+                        setDialogState(() => enabled = value);
+                      },
+                    ),
+                  ],
+                ),
+                if (enabled) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _formatTime(sliderValue),
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Slider(
+                    min: 1,
+                    max: 120,
+                    divisions: 119,
+                    value: sliderValue.toDouble(),
+                    label: _formatTime(sliderValue),
+                    onChanged: (value) {
+                      setDialogState(() => sliderValue = value.round());
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('00:01'),
+                      Text('02:00'),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop((enabled, sliderValue)),
+                child: Text(MaterialLocalizations.of(context).okButtonLabel),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    // Traitement après fermeture complète du dialogue
+    if (result != null) {
+      final newSeconds = result.$1 ? result.$2 : null;
+      setState(() => _timerSeconds = newSeconds);
+      if (newSeconds == null) {
+        _stopTimer();
+      } else if (!_isSolved) {
+        _startTimer();
+      }
+    }
   }
 
   Future<void> _startTilesCombination(int index) async {
@@ -163,6 +292,29 @@ class _MyHomePageState extends State<MyHomePage>
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(t.pages.home.title),
+        actions: [
+          if (!_isSolved && _timerSeconds != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: Center(
+                child: Text(
+                  _formatTime(_remainingSeconds),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: _remainingSeconds <= 10
+                        ? Theme.of(context).colorScheme.error
+                        : null,
+                  ),
+                ),
+              ),
+            ),
+          IconButton(
+            icon: const Icon(Icons.timer),
+            onPressed: _showTimerSettings,
+            tooltip: t.pages.home.timer.set_timer,
+          ),
+        ],
       ),
       body: Center(
         child: Column(

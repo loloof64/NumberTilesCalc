@@ -10,6 +10,11 @@
       "misc": {
         "make_operation": "Realiza tu operación",
         "you_won": "Has ganado"
+      },
+      "timer": {
+        "set_timer": "Configurar temporizador",
+        "enable": "Activar temporizador",
+        "time_up": "¡Tiempo agotado!"
       }
     }
   },
