@@ -1,4 +1,3 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python.defaultInterpreterPath": "/home/laurent/.claude-voice-env/bin/python"
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

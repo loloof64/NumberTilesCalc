@@ -1,1 +1,174 @@
+name: Build
 
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get app version
+        id: get_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | cut -d'+' -f1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build libgtk-3-dev libglib2.0-dev ruby ruby-dev rubygems build-essential rpm
+          sudo gem install fpm --no-document
+
+      - name: Get Flutter packages
+        run: flutter pub get
+
+      - name: Build Linux release
+        run: flutter build linux --release
+
+      - name: Package as AppImage
+        run: |
+          BUNDLE="build/linux/x64/release/bundle"
+          APPDIR="AppDir"
+
+          mkdir -p "$APPDIR"
+          cp -r "$BUNDLE"/. "$APPDIR/"
+
+          cat > "$APPDIR/number_tiles_calc.desktop" <<'EOF'
+          [Desktop Entry]
+          Name=NumberTilesCalc
+          Exec=number_tiles_calc
+          Icon=number_tiles_calc
+          Type=Application
+          Categories=Game;Education;
+          EOF
+
+          cp assets/icon.png "$APPDIR/number_tiles_calc.png"
+
+          cat > "$APPDIR/AppRun" <<'EOF'
+          #!/bin/bash
+          HERE=$(dirname "$(readlink -f "$0")")
+          cd "$HERE"
+          exec "$HERE/number_tiles_calc" "$@"
+          EOF
+          chmod +x "$APPDIR/AppRun"
+
+          wget -q -O appimagetool \
+            "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x appimagetool
+          ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 ./appimagetool "$APPDIR" NumberTilesCalc.AppImage
+
+      - name: Package as Debian and RPM
+        run: |
+          BUNDLE="build/linux/x64/release/bundle"
+          PKG="pkg-root"
+
+          mkdir -p "$PKG/usr/lib/number_tiles_calc"
+          mkdir -p "$PKG/usr/bin"
+          mkdir -p "$PKG/usr/share/applications"
+          mkdir -p "$PKG/usr/share/pixmaps"
+
+          cp -r "$BUNDLE"/. "$PKG/usr/lib/number_tiles_calc/"
+
+          cat > "$PKG/usr/bin/number_tiles_calc" <<'EOF'
+          #!/bin/bash
+          exec /usr/lib/number_tiles_calc/number_tiles_calc "$@"
+          EOF
+          chmod +x "$PKG/usr/bin/number_tiles_calc"
+
+          cat > "$PKG/usr/share/applications/number_tiles_calc.desktop" <<'EOF'
+          [Desktop Entry]
+          Name=NumberTilesCalc
+          Exec=number_tiles_calc
+          Icon=number_tiles_calc
+          Type=Application
+          Categories=Game;Education;
+          EOF
+
+          cp assets/icon.png "$PKG/usr/share/pixmaps/number_tiles_calc.png"
+
+          fpm -s dir -t deb \
+            -n number-tiles-calc \
+            -v "${{ steps.get_version.outputs.version }}" \
+            --architecture amd64 \
+            --description "Reach the result with the given number tiles." \
+            -C "$PKG" \
+            .
+
+          fpm -s dir -t rpm \
+            -n number-tiles-calc \
+            -v "${{ steps.get_version.outputs.version }}" \
+            --architecture x86_64 \
+            --description "Reach the result with the given number tiles." \
+            -C "$PKG" \
+            .
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NumberTilesCalc-linux-AppImage
+          path: NumberTilesCalc.AppImage
+
+      - name: Upload Debian artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NumberTilesCalc-linux-deb
+          path: "*.deb"
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NumberTilesCalc-linux-rpm
+          path: "*.rpm"
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get app version
+        id: get_version
+        run: |
+          $version = (Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)').Matches[0].Groups[1].Value.Split('+')[0].Trim()
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Get Flutter packages
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Copy extra DLLs into build output
+        run: Copy-Item -Path windows/dlls/* -Destination build/windows/x64/runner/Release/
+
+      - name: Build installer with InnoSetup
+        run: '& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion="${{ steps.get_version.outputs.version }}" windows\installer.iss'
+
+      - name: Zip Windows build
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath NumberTilesCalc-windows.zip
+
+      - name: Upload Windows installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NumberTilesCalc-windows-installer
+          path: NumberTilesCalc-setup.exe
+
+      - name: Upload Windows zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NumberTilesCalc-windows-zip
+          path: NumberTilesCalc-windows.zip
