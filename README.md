@@ -1,5 +1,7 @@
 # NumberTilesCalc
 
+[![Build](https://github.com/loloof64/NumberTilesCalc/actions/workflows/main.yml/badge.svg)](https://github.com/loloof64/NumberTilesCalc/actions/workflows/main.yml)
+
 Reach the result with the given number tiles.
 
 Maybe, if your solution starts well, it will also be able to give a solution based on your attempt.
