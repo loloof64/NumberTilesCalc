@@ -15,7 +15,7 @@ Maybe, if your solution starts well, it will also be able to give a solution bas
 
 ### Linux
 
-- the AppImage is autonomous archive : just give it execuatable rights and run it
+- the AppImage is autonomous archive : just give it execuatable rights and run it (Fedora users, you first have to install fuse and fuse-libs : `sudo dnf install fuse fuse-libs`)
 - the DEB/RPM files are installable versions
 
 ## Developpers
