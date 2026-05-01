@@ -32,6 +32,9 @@ jobs:
       - name: Get Flutter packages
         run: flutter pub get
 
+      - name: Generate translations
+        run: dart run slang
+
       - name: Build Linux release
         run: flutter build linux --release
 
@@ -148,6 +151,9 @@ jobs:
 
       - name: Get Flutter packages
         run: flutter pub get
+
+      - name: Generate translations
+        run: dart run slang
 
       - name: Build Windows release
         run: flutter build windows --release
