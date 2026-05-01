@@ -1,6 +1,6 @@
 # NumberTilesCalc
 
-[![Build](https://github.com/loloof64/NumberTilesCalc/actions/workflows/main.yml/badge.svg)](https://github.com/loloof64/NumberTilesCalc/actions/workflows/main.yml)
+[![Build](https://github.com/loloof64/NumberTilesCalc/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/loloof64/NumberTilesCalc/actions/workflows/main.yml)
 
 Reach the result with the given number tiles.
 
